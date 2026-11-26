@@ -1,0 +1,17 @@
+# 模組 04：Prometheus，定時去 scrape 模組 02、03 的 /metrics，存成時間序列
+services:
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+    volumes:
+      - "./modules/04-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "prometheus-data:/prometheus"
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:

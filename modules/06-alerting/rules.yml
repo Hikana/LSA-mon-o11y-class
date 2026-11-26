@@ -1,0 +1,35 @@
+groups:
+  - name: 加選系統-SLO
+    rules:
+      # SLO：99% 的加選請求要在 1 秒內完成
+      - alert: 加選太慢
+        expr: |
+          histogram_quantile(0.99,
+            sum by (le) (rate(http_request_duration_seconds_bucket{page="加選"}[1m]))
+          ) > 1
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "加選 p99 延遲 {{ $value | humanizeDuration }}，超過 SLO 的 1 秒"
+
+      # SLO：失敗率要低於 5%
+      - alert: 加選失敗率過高
+        expr: |
+          sum(rate(http_requests_total{page="加選", status="失敗"}[1m]))
+            /
+          sum(rate(http_requests_total{page="加選"}[1m])) > 0.05
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "加選失敗率 {{ $value | humanizePercentage }}，超過 5%"
+
+      # 服務掛了：Prometheus 抓不到 /metrics
+      - alert: 服務抓不到
+        expr: up == 0
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.job }} ({{ $labels.instance }}) 抓不到 metrics"

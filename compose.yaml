@@ -1,0 +1,8 @@
+# 這是「底座」檔案：只定義專案名稱。
+# 真正的服務都在 modules/*/compose.yaml，
+# 由 ./lab.sh 寫進 .env 的 COMPOSE_FILE 一層一層疊上來。
+#
+#   ./lab.sh up 03     # 開啟模組 01~03
+#   ./lab.sh status    # 看現在開了哪些模組、跑了哪些容器
+#   docker compose config --services   # 也可以直接問 compose
+name: o11y-lab

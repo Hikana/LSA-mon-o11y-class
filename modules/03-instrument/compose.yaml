@@ -1,0 +1,7 @@
+# 模組 03：讓 app 自己吐 metrics（RED / Golden Signals）
+# 注意：這個檔案沒有新服務，它「覆寫」模組 01 的 app 設定。
+# 在真實世界裡，這一步就是改程式碼、加上 prometheus_client。
+services:
+  app:
+    environment:
+      METRICS_ENABLED: "true"

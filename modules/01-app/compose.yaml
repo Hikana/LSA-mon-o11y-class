@@ -1,0 +1,20 @@
+# 模組 01：加選系統 + 平常流量
+# 這一步只有「原始訊號」：每個請求一行 access log。
+services:
+  app:
+    build: ./modules/01-app/app
+    image: o11y-lab/app:latest
+    ports:
+      - "8000:8000"
+    environment:
+      METRICS_ENABLED: "false"   # 模組 03 會把它改成 true
+      DB_POOL_SIZE: "3"          # 資料庫連線池大小
+      DB_WAIT_TIMEOUT: "3"       # 排隊超過幾秒就回 503
+    restart: unless-stopped
+
+  loadgen:
+    build: ./modules/01-app/app
+    image: o11y-lab/app:latest
+    command: ["python", "loadgen.py", "--rate", "3"]
+    depends_on: [app]
+    restart: unless-stopped

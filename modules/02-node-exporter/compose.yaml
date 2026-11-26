@@ -1,0 +1,12 @@
+# 模組 02：node_exporter，把這台 VM 的 CPU／記憶體／磁碟／網路變成 metrics（USE）
+services:
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    command:
+      - "--path.rootfs=/host"
+    pid: host
+    volumes:
+      - "/:/host:ro,rslave"
+    ports:
+      - "9100:9100"
+    restart: unless-stopped

@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s       # 教學用，刻意調短；正式環境常見 15s~60s
+  evaluation_interval: 5s
+
+scrape_configs:
+  # Prometheus 自己也有 metrics
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # 模組 02：這台 VM 的硬體資源
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # 模組 03：加選系統自己吐的 metrics
+  - job_name: app
+    static_configs:
+      - targets: ["app:8000"]

@@ -1,0 +1,24 @@
+# 模組 06：告警。Prometheus 依規則判斷「出事了沒」，Alertmanager 負責通知。
+services:
+  prometheus:
+    # 覆寫模組 04 的設定檔：多了 rule_files 和 alerting 兩段
+    volumes:
+      - "./modules/06-alerting/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "./modules/06-alerting/rules.yml:/etc/prometheus/rules.yml:ro"
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    volumes:
+      - "./modules/06-alerting/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro"
+    ports:
+      - "9093:9093"
+    restart: unless-stopped
+
+  # 一個只會把收到的通知印出來的小服務，代替 Email / Slack / Discord
+  alert-receiver:
+    build: ./modules/01-app/app
+    image: o11y-lab/app:latest
+    command: ["python", "-u", "receiver.py"]
+    restart: unless-stopped
